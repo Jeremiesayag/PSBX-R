@@ -1,0 +1,141 @@
+---
+title: "Package Moments R"
+author: "Jeremie Sayag"
+date: "11/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction 
+
+
+
+Nous allons vous presenter un package R du nom de "moments".
+Il a ete cree en 2015 par Lukasz Komsta et Frederick Novomestky.
+Il permet de calculer plusieurs variables statistique qu'on appelle "moments".
+
+Nous allons dans ce documents nous focaliser sur deux d'entre elles : "skewness" et "kurtosis".
+Pour ce faire nous allons d'abord devoir tenter de comprendre ces variables à travers une loi de probabilité qu'on appelle la Loi Normale.
+Ensuite, avec un exemple nous allons vous presenter le calcul de "skewness" et "kurtosis" grâce à notre fameux package R : "MOMENTS".
+
+
+## Loi Normale
+
+
+
+La Loi Normale est une loi statistique qui definit une representation de donnees selon laquelle laquelle la plupart des valeurs sont regroupées autour de la moyenne et les autres s'en écartent symétriquement des deux côtés.
+
+On l'utilise pour extrapoler des prévisions sur des événements précis à partir de phénomènes fluctuants et incertains.
+
+Cette loi normal correspond à une courbe de Gauss aussi appele courbe en "cloche".
+
+On associe plusieurs parametres à la loi normale : L'ecart-type et la moyenne.
+
+L'écart-type sert à mesurer la dispersion, ou l'étalement, d'un ensemble de valeurs autour de leur moyenne. Plus l'écart-type est faible, plus la population est homogène.
+
+
+
+## Exemple
+
+
+
+Etudions le QI de 100 enfants du même age, avec: 
+- un ecart-type (sd) = 15
+- une moyenne (mean) = 100
+
+```{r}
+
+mean <- 100 # moyenne de la population
+sd <- 15 # ecart-type de la population
+
+x <- seq(-4, 4, length = 100)* sd + mean
+
+y <- dnorm(x, mean, sd) 
+
+plot(x, y, type = "l", lwd = 2,  xlab = "QI", ylab = "Nombre d'enfants", main="Normal Distribution")
+
+```
+
+
+
+## Installation du package "Moments"
+
+Nous devons tout d'abord installer notre package Moments.
+
+Pour ce faire la façon la plus simple de faire est de cliquer sur le bouton *install* dans la fenetre en bas a droite.
+
+![](images/Installmoments_1.png)
+
+
+
+Puis de taper dans la zone *"Package"* le nom du package que l'on souhaite installer c'est à dire ici **"Moments"**.
+
+![](images/Installmoments_2.png)
+
+
+
+
+## Skewness
+
+
+**Skewness** ou coefficient d'assymetrie  mesure le degrès d'assymetrie de la distributinon d'une variable aleatoire. 
+
+- Lorsque la distribution est parfaitement *normale*, symetrique, le coefficient d'assymetrie skewness est nul.
+- Lorsque la distribution s'etale sur la *droite*, skewness > 0.
+- Lorsque la distribution s'etale sur la *gauche*, skewness < 0.
+
+![](images/skewness.png)
+
+
+Calculons Skweness de notre exemple precedent grâce à notre package:
+
+```{r}
+library(moments)
+skewness(x, na.rm = FALSE)
+
+```
+
+Nous pensions que dans notre cas, la distribution etait parfaitement normal, or il s'avere que nous avons un skweness certes très petit  mais positif. 
+
+Cela signifie que la distribution est asymetrique et s'etale sur la droite.
+
+
+
+
+## Kurtosis
+
+
+**Kurtosis** ou coefficient d'aplatissement mesure le degré d'aplatissement ou de retrecissement de la distribution d'une variable aleatoire.
+
+- Si la distribution est normale, symetrique, le coefficient d'aplatissement ou kurtosis est de 3.
+Nous nous servons principalement du Kurtosis normalise de Fisher, appele egalement *excess_kurtosis* qui est de 0 pour une loi normale.
+
+- Si la distribution est aplatie, excess_kurtosis < 0.
+
+- Si la distribution est retrecie, plus groupée vers la moyenne, excess_kurtosis > 0.
+
+![](images/kurtosis.png)
+
+
+
+Calculons Kurtosis de notre exemple precedent grâce à notre package:
+
+```{r}
+library(moments)
+
+kurtosis(x, na.rm = FALSE)
+
+```
+
+Le Kurtosis etant positif, cela signifie que les valeurs sont rapprochées de la moyenne.
+
+
+
+## Conclusion
+
+Le Package *moments* permets de calculer differents parametres d'une variable aleatoire de distribution.
+**Skewness** et **Kurtosis** permettent de verifier d'un coup d'oeil si une distribution s'eloigne de la forme gaussienne lorsque cette propriete est un facteur important à considerer.
+
