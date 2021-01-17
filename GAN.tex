@@ -1,0 +1,198 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2577
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \\documentclass[10pt]\{article\}\
+\\usepackage[headheight=1cm,margin=1in,bottom=1in,top=0.5in,left=2cm,right=2cm]\{geometry\}\
+\
+\\usepackage[utf8]\{inputenc\}\
+\\usepackage\{mdframed\}\
+\\usepackage\{bbold\}\
+\\usepackage\{graphicx\}\
+\\usepackage\{float\}\
+\\usepackage\{caption\}\
+\\renewcommand\{\\baselinestretch\}\{1\} \
+\\usepackage\{amsfonts,amssymb,amsmath,amsthm\}\
+\\usepackage\{listings\}\
+\\usepackage\{amsmath, amsfonts\}\
+\\usepackage\{tabularx\}\
+\\usepackage[shortlabels]\{enumitem\}\
+\\usepackage[rules, vlined]\{algorithm2e\}\
+\\usepackage[backend=bibtex,sorting=none]\{biblatex\}\
+\
+\\usepackage\{hyperref\}\
+\
+\\DeclareGraphicsExtensions\{.pdf,.jpg,.png,.gif\}\
+\
+% small bib:\
+\\addbibresource\{GAN/GAN.bib\}\
+\
+\\title\{\\textit\{Les r\'e9seaux de neurones antagonistes g\'e9n\'e9ratifs\}\}\
+\
+\
+\\date\{10 Janvier 2021\}\
+\
+\\author\{\\Large\{Jeremie Sayag\}\}\
+\
+\\begin\{document\}\
+\
+\\maketitle\
+\
+\\section*\{Introduction\}\
+\
+De nos jours, les r\'e9seaux de neurones antagonistes g\'e9n\'e9ratifs sont tr\'e8s connus pour leur prouesses spectaculaires dans le domaine de la g\'e9n\'e9ration de contenu. Aussi surprenant que cela puisse para\'eetre, il est d\'e9sormais possible de construire des mod\'e8les d'intelligence artificielle capable de g\'e9n\'e9rer un contenu artificiel r\'e9aliste. En t\'e9moigne les nombreux sites sur lesquels nous pouvons tester ces mod\'e8les comme \\url\{thispersondoesnotexist.com\} ou bien encore \\url\{thisartworkdoesnotexist.com\}. \\\\ \\\\\
+\\noindent\
+Dans le cadre de ce rapport, je propose d'\'e9tudier le papier fondateur des r\'e9seaux de neurones antagonistes g\'e9n\'e9ratifs : \\textbf\{"Generative Adversarial Nets"\} propos\'e9 par Ian Goodfelllow et al.\\cite\{goodfellow_generative_2014\} .Nous allons dans un premier temps d\'e9crire la strat\'e9gie des auteurs pour le probl\'e8me de g\'e9n\'e9ration de contenu. Ensuite, on \'e9tudiera plus en d\'e9tails les concepts math\'e9matiques derri\'e8re ce mod\'e8le ainsi que son impl\'e9m\'e9ntation. Enfin, nous conclurons sur les avantages et les inconv\'e9nients de ce genre de mod\'e8le en pratique.\
+\
+\\section\{Un adversaire \'e0 convaincre\}\
+L'id\'e9e derri\'e8re les r\'e9seaux de neurones antagonistes g\'e9n\'e9ratifs est assez simple. Nous avons \'e0 notre disposition deux r\'e9seaux de neurones :\
+\
+\\begin\{itemize\}\
+    \\item Le premier est app\'e9l\'e9 \\textbf\{G\'e9n\'e9rateur\} et a pour mission de g\'e9n\'e9rer un contenu r\'e9aliste\
+    \\item Le second est appel\'e9 \\textbf\{Discriminateur\} se charge d'estimer quant \'e0 lui si le contenu g\'e9n\'e9r\'e9 par le g\'e9n\'e9rateur semble r\'e9aliste ou non. \
+\\end\{itemize\} \
+\\\\ \\\\\
+\\noindent\
+La grande id\'e9e de ce mod\'e8le est de faire collaborer ces deux r\'e9seaux de neurones de telle fa\'e7on \'e0 ce qu'on atteigne un \'e9quilibre au sein duquel, le g\'e9n\'e9rateur arrive \'e0 g\'e9n\'e9rer des images tellement r\'e9alistes que le discriminateur n'arrive plus \'e0 distinguer une image r\'e9elle d'une image artificielle.\
+\
+\
+\\begin\{figure\}[h]\
+        \\centering\
+        \\includegraphics[scale=0.3]\{GAN.png\}\
+        \\caption\{Schema simple du mod\'e8le de  r\'e9seaux de neurones antagonistes g\'e9n\'e9ratifs\}\
+\\end\{figure\}\
+\
+\\noindent\
+Derri\'e8re cette tactique simpliste se cache en r\'e9alit\'e9 un entrainement difficile. Etant donn\'e9 que les deux r\'e9seaux ont un objectif diff\'e9rents visant \'e0 faire du mieux que possible pour ne pas se faire avoir par l'autre, atteindre l'\'e9quilibre n'est pas aussi simple que cela puisse para\'eetre. Cet  \\textbf\{\\href\{https://jonathan-hui.medium.com/gan-why-it-is-so-hard-to-train-generative-advisory-networks-819a86b3750b\}\{article\}\} en parle tr\'e8s bien. N\'e9anmoins, il est tout de m\'eame possible d'y arriver comme en t\'e9moigne les nombreux exploits de Nvidia r\'e9cemment.\\\\ \\\\\
+\\noindent\
+Maintenant que l'id\'e9e du mod\'e8le est d\'e9crite, il est temps de discuter en d\'e9tails ce qui se cache derri\'e8re cet architecture formellement.\
+\
+\\section\{La th\'e9orie math\'e9matique des r\'e9seaux de neurones antagonistes g\'e9n\'e9ratifs\}\
+\
+Nous allons consider ici le m\'eame scenario que les auteurs. Nous avons un dataset $\\mathcal D$ constitu\'e9 d'observations $x$ g\'e9n\'e9r\'e9es \'e0 partir de la m\'eame distribution $p_\{data\}$. Par exemple, nous pouvons imaginer un ensemble de visages, chaque visage \'e9tant issue d'une m\'eame distribution \'e0 d\'e9terminer. \\\\ \\\\\
+\\noindent\
+Le but du g\'e9n\'e9rateur va \'eatre d'approximer cette distribution du mieux possible. Nous appelerons dans la suite $p_g$ la distribution des observations g\'e9n\'e9r\'e9es par le g\'e9n\'e9rateur G. Maintenant, quel peut \'eatre la proc\'e8dure pour g\'e9n\'e9rer du contenu ? Les auteurs proposent d'imaginer qu'il existe une \\textbf\{variable latente\} $\\mathbf\{z\}$ de distribution simple et connue $p_z$, qui permettrait en quelquesorte d'encoder une observation qu'il faudra par la suite d\'e9coder en utilisant un r\'e9seau de neurones comme le perceptron multi-couche par exemple. Pour mieux comprendre, on peut imaginer dans le cas des visages que la variable latente donne des informations sur la couleur des cheveux,des yeux ou bien encore la forme du nez. \\\\ \\\\\
+\\noindent\
+Le discriminateur, quant \'e0 lui, prend en entr\'e9e une observation $\\mathbf\{x\}$ potentiellement artificielle et retourne simplement la probabilit\'e9 $\\mathbf\{D(x)\}$ que cette image soit artificielle ou non selon lui. \
+\\noindent\
+\\begin\{figure\}[H]\
+\\centering\
+\\includegraphics[scale=0.25]\{latent.png\}\
+\\caption\{Schema illustratif d'une \'e9tape du GAN o\'f9 la variable latente suit une loi normale\}\
+\\end\{figure\}\
+\\noindent\
+Le Discriminateur a pour objectif de bien distinguer le r\'e9el de l'artificiel. Ainsi, on comprend que pour $x \\sim p_\{data\}$, D(x) doit etre maximale tandis que pour $x \\sim p_\{g\}$, D(x) doit \'eatre minimale.\
+\\\\ \\\\\
+\\noindent\
+Du c\'f4t\'e9 du g\'e9n\'e9rateur, son r\'f4le est simplement de tromper le discriminateur. Dans ce cas, il cherche \'e0 maximiser D(G(z)) o\'f9 $z \\sim p_z$. \\\\ \\\\\
+\\noindent\
+Ces deux objectifs se traduisent ais\'e9ment par le probl\'e8me math\'e9matique suivant : \
+\
+\
+$$\\fbox\{\
+$\\min _\{G\} \\max _\{D\} V(D, G)=\\mathbb\{E\}_\{\\boldsymbol\{x\} \\sim p_\{\\text \{data \}\}(\\boldsymbol\{x\})\}[\\log D(\\boldsymbol\{x\})]+\\mathbb\{E\}_\{\\boldsymbol\{z\} \\sim p_\{\\boldsymbol\{z\}\}(\\boldsymbol\{z\})\}[\\log (1-D(G(\\boldsymbol\{z\})))]$\}$$\
+\
+\\noindent\
+En effet, du point de vue du discriminateur, r\'e9ussir \'e0 distinguer le vrai du faux revient \'e0 maximizer D(x) et 1-D(G(z)). Et, du point de vue du g\'e9n\'e9rateur, on cherche pr\'e9cis\'e8ment \'e0 maximiser D(G(z)) pour tromper le discriminateur. \\\\ \\\\\
+\\noindent\
+Quand les auteurs introduisent cet objectif, ils expliquent deux choses importantes :\
+\\begin\{itemize\}\
+    \\item Il est conseill\'e9 d'alterner k entra\'eenement du discriminateur avec 1 entra\'eenement du g\'e9n\'e9rateur afin de faire en sorte que le discriminateur soit assez aiguis\'e9 pour distinguer le vrai du faux et \'e9viter ainsi \\textbf\{le probl\'e8me de sur-apprentissage\}. En effet, si l'on entraine de fa\'e7on \'e9quilibr\'e9 les deux mod\'e8les, le discriminateur n'\'e9tant pas bon au d\'e9but car non entrain\'e9, risque de laisser entendre rapidement au g\'e9n\'e9rateur que ce dernier \'e0 r\'e9ussi \'e0 le tromper. La r\'e9alit\'e9 est tout autre : le discriminateur n'\'e9tant pas bon initialement pour distiguer le vrai du faux, il est clairement plus facile de le tromper tout en g\'e9n\'e9rant du contenu compl\'e8tement bruit\'e9 !\
+    \\item Les auteurs pr\'e9conisent \'e9galement de modifier l'objectif d\'e9fini plus haut \'e9tant donn\'e9 qu'il y a un risque de saturation de ce dernier. En outre, comme le g\'e9n\'e9rateur n'est pas bon au d\'e9but, on s'attend \'e0 avoir $D(G(z))$ plut\'f4t faible au d\'e9part et donc le terme en $\\log(1-D(G(z))$ risque d'\'eatre tr\'e8s proche de zero empechant le bon d\'e9roulement de l'entra\'eenement. Pour contrer ce probl\'e8me, ils proposent simplement de maximiser $\\log(D(G(z))$ plut\'f4t que de minimiser $\\log(1-D(G(z))$.\
+\\end\{itemize\}\
+\
+\\noindent\
+Une chose m'a frapp\'e9 en lisant l'article. Bien que les auteurs  donnent ces pr\'e9cieux conseils, ils ne semblent pas du tout les appliquer dans leurs exp\'e9riences. En effet, en lisant l'algorithme 1, on se rend compte qu'ils ont parfaitement \'e9quilibr\'e9 l'entra\'eenement du discriminateur avec celui du g\'e9n\'e9rateur tout en gardant la m\'eame expression de l'objectif \'e0 minimiser/maximiser selon le mod\'e8le. Toutefois, m\'eame en ne suivant pas leur recommandations, ils ont r\'e9ussi \'e0 obtenir des r\'e9sultats satisfaisants. \\\\ \\\\\
+\\noindent\
+Concernant la phase d'entra\'eenement, elle est tout \'e0 fait comparable \'e0 une phase d'entra\'eenement classique d'un r\'e9seau de neurones. L'id\'e9e est d'utiliser l'algorithme de descente du gradient afin de trouver les param\'e8tres permettant le mieux d'arriver \'e0 nos fins. Concr\'e8tement ici, l'objectif se d\'e9compose en un probl\'e8me de maximisation pour le discriminateur et un probl\'e8me de minimisation pour le g\'e9n\'e9rateur. Ainsi, il y a simplement une alternance entre l'algorithme de mont\'e9e de gradient et l'algorithme de descente de gradient de telle fa\'e7on \'e0 optimiseer les param\'e8tres respectifs de ces deux mod\'e8les selon leurs objectifs respectifs\
+\
+\\section\{Garantie de l'efficacit\'e9 d'un r\'e9seau de neurones antagonistes g\'e9n\'e9ratif\}\
+\
+Les auteurs ont montr\'e9 tr\'e8s simplement que lorsque le g\'e9n\'e9rateur est fix\'e9, le discriminateur optimal v\'e9rifie l'\'e9quation :\
+\
+$$\\fbox\{$D_G^*(x)=\\dfrac\{p_\{data\}(x)\}\{p_\{data\}(x)+p_g(x)\}$\}$$\
+\\noindent\
+Ce r\'e9sultat est assez coh\'e9rent avec l'intuition. Notamment, si le g\'e9n\'e9rateur \'e0 r\'e9ussi son coup alors $p_\{g\}=p_\{data\}$ et donc le discriminateur optimal renvoie pour n'importe quelle observation $x$ artificielle ou non la probabilit\'e9 $\\frac\{1\}\{2\}$. Cela signifie pr\'e9cis\'e8ment que le g\'e9n\'e9rateur ne sait plus distinguer ce qui est vrai et ce qui est faux. La preuve de ce theor\'e8me n'\'e9tant pas tr\'e8s compliqu\'e9, nous pouvons la rappeller ici : \\\\ \\\\\
+\\noindent\
+$\\blacksquare$ Preuve : Du point de vue du discriminateur, nous devons maximiser la quantit\'e9 $$V(G, D)=\\mathbb\{E\}_\{\\boldsymbol\{x\} \\sim p_\{\\text \{data \}\}(\\boldsymbol\{x\})\}[\\log D(\\boldsymbol\{x\})]+\\mathbb\{E\}_\{\\boldsymbol\{z\} \\sim p_\{\\boldsymbol\{z\}\}(\\boldsymbol\{z\})\}[\\log (1-D(G(\\boldsymbol\{z\})))]$$\
+Regardons la plus en d\'e9tails.\
+$$\
+\\begin\{aligned\}\
+V(G, D) &=\\int_\{\\boldsymbol\{x\}\} p_\{\\text \{data \}\}(\\boldsymbol\{x\}) \\log (D(\\boldsymbol\{x\})) d x+\\int_\{\\boldsymbol\{z\}\} p_\{\\boldsymbol\{z\}\}(\\boldsymbol\{z\}) \\log (1-D(G(\\boldsymbol\{z\}))) d z \\\\\
+&=\\int_\{\\boldsymbol\{x\}\} p_\{\\text \{data \}\}(\\boldsymbol\{x\}) \\log (D(\\boldsymbol\{x\}))+p_\{g\}(\\boldsymbol\{x\}) \\log (1-D(\\boldsymbol\{x\})) d x\
+\\text\{  car lorsque $z \\sim p_z$, $D(G(z)) \\sim p_g$ par d\'e9finition de $p_g$\}\
+\\end\{aligned\}\
+$$\
+Maitenant, il se trouve que \
+pour tout $(a, b) \\in \\mathbb\{R\}^\{2\} \\backslash\\\{0,0\\\},$ la fonction f: $y \\rightarrow a \\log (y)+b \\log (1-y)$ admet un maximum sur \
+[0,1] en $\\frac\{a\}\{a+b\} .$  \\\\ \\\\\
+\\noindent\
+Nous pouvons le voir simplement en d\'e9rivant $f$, \\\\ \\\\\
+\\noindent\
+$f'(y)=\\dfrac\{a\}\{y\}-\\dfrac\{b\}\{1-y\} = \\dfrac\{a(1-y)-by\}\{y(1-y)\}$ et cette quantit\'e9 est positive si et seulement si $y \\leq \\frac\{a\}\{a+b\}$ \\\\ \\\\\
+\\noindent\
+Ainsi, pour $x$ fix\'e9 en identifiant $a=p_\{data\}(x)$ et $b=\{p_g(x)\}$, on obtient le r\'e9sultat attendu $\\qedsymbol$.\
+\\\\ \\\\\
+\\noindent\
+Maintenant, lorsque le discriminateur est enfin le discriminateur optimale, les auteurs ont montr\'e9 assez simplement que du point de vue du g\'e9n\'e9rateur, l'objectif optimale est precis\'e9ment atteint lorsque $p_g=p_\{data\}$. \\\\ \\\\\
+\\noindent\
+Le coeur de la preuve de ce r\'e9sultat r\'e9side en la r\'e9\'e9criture de l'objectif connaissant maintenant $D^*_\{G\}$. Les auteurs ont montr\'e9 notamment qu'il est possible de l'\'e9crire sous la forme suivante :\
+\
+\\begin\{align*\}\
+V(G,D^*)  &=-\\log (4)+K L\\left(p_\{\\text \{data \}\} \\| \\frac\{p_\{\\text \{data \}\}+p_\{g\}\}\{2\}\\right)+K L\\left(p_\{g\} \\| \\frac\{p_\{\\text \{data \}\}+p_\{g\}\}\{2\}\\right) \\\\\
+          &=-\\log (4)+2 \\cdot J S D\\left(p_\{\\text \{data \}\} \\| p_\{g\}\\right)\
+\\end\{align*\}\
+\\noindent\
+o\'f9 $KL$ et $JSD$ sont des m\'e9triques permettant de mesurer \'e0 quel point deux distributions de probabilit\'e9s sont proches l'une de l'autre. Elles sont souvent assimil\'e9s \'e0 des distances entre distributions et sont pr\'e9cis\'e8ment minimis\'e9es lorsque les deux distributions en leur sein sont \'e9gales. D'o\'f9 le r\'e9sultat d\'e9duit par les auteurs. Nous avons donc maintenant une garantie math\'e9matique du bon fonctionnement de l'algorithme. Cependant, cela ne fonctionne en pratique que si il y a convergence. \\\\ \\\\\
+\\noindent\
+Heureusement pour nous, les auteurs ont prouv\'e9 le r\'e9sultat ci-dessous : \
+\\begin\{mdframed\}\
+Si les hypoth\'e8ses suivantes sont v\'e9rifi\'e9es: \
+\\begin\{itemize\}\
+    \\item G et D sont assez complexes compte tenu du probl\'e8me\
+    \\item D r\'e9ussi \'e0 atteindre son optimum lorsque G est fix\'e9\
+    \\item G est correctement actualis\'e9 de fa\'e7on \'e0 atteindre son objectif \
+\\end\{itemize\}\
+Alors  $p_g$ converge vers $p_\{data\}$\
+\\end\{mdframed\}\
+\
+\\noindent\
+La premi\'e8re hypoth\'e8se est difficile \'e0 traduire mais on peut l'expliquer facilement avec un exemple. G\'e9n\'e9rer les nombres du dataset MNIST est bien plus facile que g\'e9n\'e9rer des visages. Ainsi, on s'attend \'e0 avoir une architecture plus complexe pour g\'e9n\'e9rer des visages que pour g\'e9n\'e9rer des nombres. Notamment, si l'on utilise une architecture trop simpliste, il nous sera impossible de g\'e9n\'e9rer des visages r\'e9alistes. En pratique, les nombres de MNIST peuvent \'eatre plut\'f4t bien g\'e9n\'e9rer avec des perceptrons multi-couches tandis que pour construire des visages, il faut plut\'f4t se pencher vers des mod\'e8les impliquant des convolutions et des d\'e9convolutions comme le DCGAN \\cite\{radford2016unsupervised\}.\
+\\\\ \\\\\
+\\noindent\
+Malheureusement, je n'ai pas tr\'e8s bien compris la preuve de ce r\'e9sultat mais il me para\'eet plut\'f4t intuitif.\
+\
+\\section\{Avantages et inconv\'e9nients des r\'e9seaux de neurones antagonistes g\'e9n\'e9ratifs\}\
+\
+Le mod\'e8le present\'e9 dans ce papier part d'une id\'e9e simple mais pourtant r\'e9volutionnaire pour l'\'e9poque. L'impl\'e9m\'e9ntation du mod\'e8le est \'e9galement simple et il semble possible d'arriver \'e0 des bons r\'e9sultats assez rapidement pour des datasets de faible complexit\'e9 comme MNIST. Il y a en fait de nombreux avantages dans ce mod\'e8le. \\\\ \\\\\
+\\noindent\
+Dans un premier temps, on peut remarquer que l'apprentissage du mod\'e8le implique seulement de pouvoir effectuer les r\'e9tro-propagation des gradients comme dans tout r\'e9seau de neurones. Cela est relativement ais\'e9 et beaucoup plus envisageable que de faire de long calculs impliquant des cha\'eenes de Markov comme cela \'e9tait fait avant d'apr\'e8s l'article. De plus, le mod\'e8le est plut\'f4t flexible car nous sommes parfaitement libre sur le design des architectures du discriminateur et du g\'e9n\'e9rateur. \\\\ \\\\\
+\\noindent\
+N\'e9anmoins, ce genre de mod\'e8le g\'e9n\'e9ratif est plut\'f4t opaque car nous n'avons aucun moyen d'acc\'e9der \'e0 une representation explicite de la distribution qui g\'e9n\'e8re les images artificielles. En effet, tout le principe du GAN repose sur la capacit\'e9 de d\'e9coder une variable latente \'e0 partir d'un r\'e9seau de neurones de telle fa\'e7on \'e0 obtenir un r\'e9sultat qui a du sens sans pour autant avoir acc\'e8s \'e0 la distribution $p_g$. D'autre part, comme expliqu\'e9 pr\'e9c\'e8demment il est plut\'f4t difficile de trouver un bon \'e9quilibrage de $D$ et de $G$ de telle fa\'e7on \'e0 garantir le bon fonctionnement de l'apprentissage. \
+\
+\\section\{Applications\}\
+\
+Dans la vie de tous les jours, ce genre de mod\'e8le peut \'eatre tr\'e8s utile dans diff\'e9rents cadres. Dans un premier temps, il peut servir \'e0 g\'e9n\'e9rer de la donn\'e9e quand on en manque pour r\'e9aliser un algorithme intelligent. En effet, il est courant de voir que des personnes utilisent ce genre de mod\'e8le pour artificiellement augmenter leur dataset de fa\'e7on \'e0 pouvoir garantir un meilleur fonctionnement de leur propre algorithme \\cite\{antoniou2018data\}. \\\\ \\\\\
+\\noindent\
+D'autre part, cet outil peut se r\'e9veler tr\'e8s utile dans le domaine de l'art et du design afin d'accompagner le processus cr\'e9atif. Par exemple, on peut imaginer un architecte se servir d'un tel mod\'e8le dans le but d'avoir une id\'e9e pour le design de son prochain bat\'eement. On peut \'e9galement imaginer un dessinateur s'inspir\'e9 \'e0 partir de croquis g\'e9n\'e9r\'e9 par un GAN. Concr\'e8tement, les possibilit\'e9s sont infinies.  \\\\ \\\\\
+\\noindent\
+Nous pouvons \'e9galement parler de l'entreprise Eva Engines qui se sert pr\'e9cis\'e9ment de ce genre de mod\'e8le pour fournir des mannequins virtuels aux marques de modes, leur permettant de pr\'e9voir \'e0 l'avance le rendu de leur cr\'e9ation et gagner du temps sur leur process.\
+\\section*\{Conclusion\}\
+\
+\
+Comme me l'a fait remarqu\'e9 notre professeur Mr Laude, \'e0 l'aide de TensorFlow il est possible de simuler un Gan ce qui nous permet d'assimiler un peu plus ce concept :\
+Pour cela il suffit de se rendre sur \\url\{playground.tensorflow.org\}, ou utilis\'e9 ce site \
+\\url\{https://poloclub.github.io/ganlab/\} qui permet de faire toutes sortes de simulation de GAN.\
+Enfin, ce site tr\'e9s bien fait de tensorflow \\url\{https://www.tensorflow.org/tutorials/generative/dcgan\} m'a permis d'apprehender les concepts relatifs aux GAN.\
+\
+Pour conclure, nous avons discut\'e9 dans ce rapport du mod\'e8le des r\'e9seaux de neurones antagonistes g\'e9n\'e9ratifs permettant de constuire des images artificielles r\'e9alistes. Notamment, nous avons expliqu\'e9 bri\'e8vement son fonctionnement, d\'e9taill\'e9 quelques aspects math\'e9matiques du mod\'e8le et discut\'e9 de ses avantages et inconv\'e9nients tout en pr\'e9cisant quelques unes de ses applications. Aujourd'hui, ce mod\'e8le a \'e9t\'e9 developp\'e9 bien plus loin que sa version originelle et continue d'\'eatre \'e9tudier pour r\'e9soudre des probl\'e8mes plus en plus complexes. NVIDIA est de loin l'entreprise la plus \'e0 jour sur le sujet profitant de ses propres cartes graphiques pour acc\'e9l\'e9rer leurs calculs. Enfin, nous pouvons \'e9galement rappeler l'existence des deepfakes profitant des prouesses de ce mod\'e8le pour tromper notre vigilance. Etant donn\'e9 ce genre de d\'e9rives, il pourrait \'eatre int\'e9ressant de d\'e9velopper une strat\'e9gie permettant de d\'e9tecter qu'une image r\'e9aliste \'e0 l'oeil nu a \'e9t\'e9 g\'e9n\'e9r\'e9e par un algorithme ou non...\
+\
+\
+\
+\\nocite\{*\}\
+\\printbibliography\
+\
+\\end\{document\}}
